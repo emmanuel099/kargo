@@ -24,7 +24,8 @@ func (s *server) ListProjects(
 		return nil, fmt.Errorf("error listing Projects: %w", err)
 	}
 
-	if req.Msg.GetMine() {
+	userInfo, _ := user.InfoFromContext(ctx)
+	if !userInfo.IsAdmin {
 		list.Items = filterProjectsByAccess(ctx, list.Items)
 	}
 
@@ -104,7 +105,8 @@ func (s *server) listProjects(c *gin.Context) {
 		return
 	}
 
-	if c.Query("mine") == trueStr {
+	userInfo, _ := user.InfoFromContext(ctx)
+	if !userInfo.IsAdmin {
 		list.Items = filterProjectsByAccess(ctx, list.Items)
 	}
 
